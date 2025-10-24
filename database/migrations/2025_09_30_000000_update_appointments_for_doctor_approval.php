@@ -17,10 +17,14 @@ return new class extends Migration
         DB::statement("UPDATE appointments SET status = 'completed' WHERE status = 'confirmed'");
         DB::statement("UPDATE appointments SET status = 'declined' WHERE status = 'cancelled'");
 
-        Schema::table('appointments', function (Blueprint $table) {
-            // Change status enum to new values
-            $table->enum('status', ['pending', 'approved', 'declined', 'completed', 'expired'])->default('pending')->change();
+        // For PostgreSQL, we need to use raw SQL to change the enum
+        DB::statement("ALTER TABLE appointments ALTER COLUMN status TYPE VARCHAR(255)");
+        DB::statement("ALTER TABLE appointments ADD CONSTRAINT status_check CHECK (status IN ('pending', 'approved', 'declined', 'completed', 'expired'))");
+        DB::statement("ALTER TABLE appointments ALTER COLUMN status SET NOT NULL");
+        DB::statement("ALTER TABLE appointments ALTER COLUMN status SET DEFAULT 'pending'");
+        DB::statement("ALTER TABLE appointments ALTER COLUMN status DROP IDENTITY IF EXISTS");
 
+        Schema::table('appointments', function (Blueprint $table) {
             // Add new columns
             $table->json('uploaded_files')->nullable();
             $table->timestamp('approved_at')->nullable();

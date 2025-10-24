@@ -20,6 +20,7 @@ class AuthServiceProvider extends ServiceProvider
         'App\Models\LabResult' => 'App\Policies\LabResultPolicy',
         'App\Models\PatientRisk' => 'App\Policies\PatientRiskPolicy',
         'App\Models\Prescription' => 'App\Policies\PrescriptionPolicy',
+        'App\Models\EhrRecord' => 'App\Policies\EhrRecordPolicy',
     ];
 
     /**
