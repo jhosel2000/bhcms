@@ -3,7 +3,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "releaseCommand": "php artisan migrate --force",
+    "releaseCommand": "echo \"RELEASE PHASE STARTING\" && php artisan migrate --force --verbose && echo \"RELEASE PHASE ENDED\"",
     "startCommand": "php artisan serve --host=0.0.0.0 --port=$PORT"
   },
   "engines": {
