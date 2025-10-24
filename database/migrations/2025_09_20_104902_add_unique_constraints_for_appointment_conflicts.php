@@ -62,7 +62,7 @@ return new class extends Migration
                          });
                      });
             })
-            ->where('a1.id', '<', 'a2.id')
+            ->whereRaw('a1.id < a2.id')
             ->whereIn('a1.status', ['scheduled', 'confirmed'])
             ->whereIn('a2.status', ['scheduled', 'confirmed'])
             ->get();
