@@ -17,6 +17,9 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
+# Remove cached config to ensure fresh config on deploy
+RUN rm -f bootstrap/cache/config.php
+
 # Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
