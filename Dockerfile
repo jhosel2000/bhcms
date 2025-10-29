@@ -8,7 +8,7 @@ FROM php:8.2-fpm
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git curl libpng-dev libjpeg-dev libfreetype6-dev zip unzip libonig-dev \
-    libxml2-dev libzip-dev nginx supervisor \
+    libxml2-dev libzip-dev nginx supervisor postgresql-client libpq-dev \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip exif pcntl bcmath gd
 
 # Set working directory
