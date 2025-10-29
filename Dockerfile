@@ -31,7 +31,9 @@ COPY ./nginx.conf /etc/nginx/sites-available/default
 EXPOSE 80
 
 # Start Supervisor to run both Nginx and PHP-FPM
-CMD sleep 10 && \
+CMD php artisan config:clear && \
+    php artisan cache:clear && \
+    sleep 10 && \
     php artisan migrate --force && \
     php artisan storage:link && \
     supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
