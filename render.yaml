@@ -1,30 +1,26 @@
 # render.yaml
 # ────────────────────────────────────────────────
-# Barangay Health Center Monitoring and Scheduling System
-# Laravel + PostgreSQL + Gmail SMTP + Free-tier Render deployment
+# Barangay Health Center Monitoring & Scheduling System
+# Laravel + PostgreSQL + Gmail SMTP (Docker-based)
 # ────────────────────────────────────────────────
 
 services:
   - type: web
     name: bhcmss
-    env: php
     plan: free
-    buildCommand: |
-      composer install --no-dev --optimize-autoloader
-      php artisan key:generate
-      php artisan migrate --force
-      php artisan storage:link
-    startCommand: |
-      php artisan serve --host 0.0.0.0 --port $PORT
+    env: docker
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_ENV
         value: production
-      - key: APP_KEY
-        generateValue: true
       - key: APP_DEBUG
         value: false
+      - key: APP_KEY
+        generateValue: true
       - key: APP_URL
         value: https://bhcmss.onrender.com
+
+      # Database connection
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
@@ -47,6 +43,8 @@ services:
         fromDatabase:
           name: bhcmss-db
           property: password
+
+      # Gmail SMTP for reminders
       - key: MAIL_MAILER
         value: smtp
       - key: MAIL_HOST
@@ -54,13 +52,13 @@ services:
       - key: MAIL_PORT
         value: 587
       - key: MAIL_USERNAME
-        sync: false   # Add manually in Render dashboard
+        sync: false   # Set in Render dashboard
       - key: MAIL_PASSWORD
-        sync: false   # Add manually in Render dashboard (App Password)
+        sync: false   # Set in Render dashboard (App Password)
       - key: MAIL_ENCRYPTION
         value: tls
       - key: MAIL_FROM_ADDRESS
-        value: no-reply@bhcmss.onrender.com
+        value: no-reply@bhcmss.com
       - key: MAIL_FROM_NAME
         value: BHCMSS Notifications
 
