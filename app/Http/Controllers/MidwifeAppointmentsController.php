@@ -131,11 +131,11 @@ class MidwifeAppointmentsController extends Controller
             });
 
         $healthTrends = Appointment::where('midwife_id', $midwifeId)
-            ->selectRaw('MONTH(appointment_date) as month, YEAR(appointment_date) as year, count(*) as count')
+            ->selectRaw('EXTRACT(MONTH FROM appointment_date) as month, EXTRACT(YEAR FROM appointment_date) as year, count(*) as count')
             ->where('appointment_date', '>=', now()->subMonths(12))
-            ->groupBy('year', 'month')
-            ->orderBy('year')
-            ->orderBy('month')
+            ->groupByRaw('EXTRACT(YEAR FROM appointment_date), EXTRACT(MONTH FROM appointment_date)')
+            ->orderByRaw('EXTRACT(YEAR FROM appointment_date)')
+            ->orderByRaw('EXTRACT(MONTH FROM appointment_date)')
             ->get()
             ->map(function ($item) {
                 return [

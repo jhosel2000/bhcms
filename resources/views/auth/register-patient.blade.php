@@ -164,6 +164,12 @@
                                             <x-input-error :messages="$errors->get('full_address')" class="mt-2" />
                                         </div>
                                         <div>
+                                            <label for="barangay" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">Barangay</label>
+                                            <input id="barangay" type="text" name="barangay" value="{{ old('barangay') }}"
+                                                   class="block w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3.5 text-sm text-slate-700 shadow-inner shadow-amber-50 transition focus:border-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-100">
+                                            <x-input-error :messages="$errors->get('barangay')" class="mt-2" />
+                                        </div>
+                                        <div>
                                             <label for="contact_number" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">Contact Number</label>
                                             <input id="contact_number" type="text" name="contact_number" value="{{ old('contact_number') }}"
                                                    class="block w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3.5 text-sm text-slate-700 shadow-inner shadow-amber-50 transition focus:border-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-100"

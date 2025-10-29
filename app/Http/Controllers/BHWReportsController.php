@@ -43,11 +43,10 @@ class BHWReportsController extends Controller
             ->get();
 
         // Monthly patient registrations (last 6 months)
-        $monthlyRegistrations = Patient::selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as count')
+        $monthlyRegistrations = Patient::selectRaw('EXTRACT(MONTH FROM created_at) as month, EXTRACT(YEAR FROM created_at) as year, COUNT(*) as count')
             ->where('created_at', '>=', now()->subMonths(6))
-            ->groupBy('year', 'month')
-            ->orderBy('year', 'desc')
-            ->orderBy('month', 'desc')
+            ->groupByRaw('EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at)')
+            ->orderByRaw('EXTRACT(YEAR FROM created_at) desc, EXTRACT(MONTH FROM created_at) desc')
             ->get();
 
         // Appointment status
@@ -161,11 +160,10 @@ class BHWReportsController extends Controller
             'civilStatusStats' => Patient::select('civil_status', DB::raw('count(*) as count'))
                 ->groupBy('civil_status')
                 ->get(),
-            'monthlyRegistrations' => Patient::selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as count')
+            'monthlyRegistrations' => Patient::selectRaw('EXTRACT(MONTH FROM created_at) as month, EXTRACT(YEAR FROM created_at) as year, COUNT(*) as count')
                 ->where('created_at', '>=', now()->subMonths(6))
-                ->groupBy('year', 'month')
-                ->orderBy('year', 'desc')
-                ->orderBy('month', 'desc')
+                ->groupByRaw('EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at)')
+                ->orderByRaw('EXTRACT(YEAR FROM created_at) desc, EXTRACT(MONTH FROM created_at) desc')
                 ->get(),
             'appointmentStatus' => Appointment::select('status', DB::raw('count(*) as count'))
                 ->groupBy('status')

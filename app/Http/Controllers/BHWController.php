@@ -72,11 +72,10 @@ class BHWController extends Controller
                 ];
             });
 
-        $healthTrends = Patient::selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, count(*) as count')
+        $healthTrends = Patient::selectRaw('EXTRACT(MONTH FROM created_at) as month, EXTRACT(YEAR FROM created_at) as year, count(*) as count')
             ->where('created_at', '>=', now()->subMonths(12))
-            ->groupBy('year', 'month')
-            ->orderBy('year')
-            ->orderBy('month')
+            ->groupByRaw('EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at)')
+            ->orderByRaw('EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at)')
             ->get()
             ->map(function ($item) {
                 return [

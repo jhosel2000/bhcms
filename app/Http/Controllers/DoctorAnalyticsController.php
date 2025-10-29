@@ -31,10 +31,9 @@ class DoctorAnalyticsController extends Controller
         // Trends: Appointments per month (last 12 months)
         $appointmentTrends = Appointment::where('doctor_id', $doctorId)
             ->where('created_at', '>=', now()->subMonths(12))
-            ->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as count')
-            ->groupBy('year', 'month')
-            ->orderBy('year', 'desc')
-            ->orderBy('month', 'desc')
+            ->selectRaw('EXTRACT(YEAR FROM created_at) as year, EXTRACT(MONTH FROM created_at) as month, COUNT(*) as count')
+            ->groupByRaw('EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at)')
+            ->orderByRaw('EXTRACT(YEAR FROM created_at) desc, EXTRACT(MONTH FROM created_at) desc')
             ->get()
             ->map(function ($item) {
                 $item->month_name = date('F Y', mktime(0, 0, 0, $item->month, 1, $item->year));
