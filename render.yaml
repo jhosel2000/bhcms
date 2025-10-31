@@ -21,23 +21,11 @@ services:
       - key: APP_URL
         value: https://bhcmss.onrender.com
 
-      # Database connection - Production Postgres via Supabase
+      # Database connection - SQLite for free tier (recommended for demos)
       - key: DB_CONNECTION
-        value: pgsql
+        value: sqlite
       - key: DB_DATABASE
-        value: postgres
-      - key: DB_HOST
-        sync: false  # Set in Render dashboard from Supabase connection info
-      - key: DB_PORT
-        value: "5432"
-      - key: PGSSL
-        value: "true"
-      - key: PGSSLMODE
-        value: prefer
-      - key: DB_USERNAME
-        sync: false  # Set in dashboard: from Supabase connection info
-      - key: DB_PASSWORD
-        sync: false  # Set in dashboard: from Supabase connection info
+        value: /var/www/html/database/database.sqlite
 
       # Cache and session settings for production
       - key: CACHE_DRIVER
