@@ -10,6 +10,7 @@ services:
     plan: free
     env: docker
     dockerfilePath: ./Dockerfile
+    autoDeploy: false  # Safer for production: manual deploys
     envVars:
       - key: APP_ENV
         value: production
@@ -20,29 +21,50 @@ services:
       - key: APP_URL
         value: https://bhcmss.onrender.com
 
-      # Database connection
+      # Database connection - Production Postgres via Supabase
       - key: DB_CONNECTION
         value: pgsql
-      - key: DB_HOST
-        fromDatabase:
-          name: bhcmss-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: bhcmss-db
-          property: port
       - key: DB_DATABASE
-        fromDatabase:
-          name: bhcmss-db
-          property: database
+        sync: false  # Set in dashboard: your Supabase database name
+      - key: DB_HOST
+        sync: false  # Set in dashboard: your-project.supabase.co
+      - key: DB_PORT
+        value: "5432"
       - key: DB_USERNAME
-        fromDatabase:
-          name: bhcmss-db
-          property: user
+        sync: false  # Set in dashboard: from Supabase connection info
       - key: DB_PASSWORD
-        fromDatabase:
-          name: bhcmss-db
-          property: password
+        sync: false  # Set in dashboard: from Supabase connection info
+
+      # Cache and session settings for production
+      - key: CACHE_DRIVER
+        value: file
+      - key: SESSION_DRIVER
+        value: file
+      - key: SESSION_LIFETIME
+        value: "120"
+
+      # ------------------------------------------------------------------
+      # Example: switch to external Postgres (recommended for production)
+      # ------------------------------------------------------------------
+      # To use an external Postgres (Supabase/Neon/ElephantSQL), set DB_CONNECTION
+      # to `pgsql` and set DB_HOST/DB_PORT/DB_DATABASE/DB_USERNAME/DB_PASSWORD in
+      # the Render dashboard (or include them here with secure values). Example:
+      #
+      # - key: DB_CONNECTION
+      #   value: pgsql
+      # - key: DB_HOST
+      #   value: your-db-host.supabase.co
+      # - key: DB_PORT
+      #   value: 5432
+      # - key: DB_DATABASE
+      #   value: your_database_name
+      # - key: DB_USERNAME
+      #   value: your_db_user
+      # - key: DB_PASSWORD
+      #   value: your_db_password
+      #
+      # See DEPLOY.md for step-by-step instructions to create a free Supabase or
+      # Neon database and wire it into Render.
 
       # Gmail SMTP for reminders
       - key: MAIL_MAILER
@@ -62,8 +84,7 @@ services:
       - key: MAIL_FROM_NAME
         value: BHCMSS Notifications
 
-databases:
-  - name: bhcmss-db
-    plan: free
-    databaseName: bhcmss
-    user: bhcmss_user
+## Note: Managed database removed from `render.yaml` when using SQLite for free plan.
+## If you later want to use Render-managed Postgres, add the `databases:` section back
+## and set DB_CONNECTION=pgsql in the envVars. SQLite is recommended for quick demos on
+## free plans but not for production use.
