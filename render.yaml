@@ -33,7 +33,7 @@ services:
       - key: PGSSL
         value: "true"
       - key: PGSSLMODE
-        value: require
+        value: prefer
       - key: DB_USERNAME
         sync: false  # Set in dashboard: from Supabase connection info
       - key: DB_PASSWORD

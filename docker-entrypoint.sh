@@ -17,12 +17,12 @@ wait_for_postgres() {
   echo "Waiting for Postgres at ${DB_HOST_CLEAN}:${DB_PORT}..."
   echo "Database: ${DB_DATABASE}, User: ${DB_USERNAME}"
   export PGPASSWORD="${DB_PASSWORD}"
-  export PGSSLMODE=require
+  export PGSSLMODE=prefer
   retries=0
-  until psql "host=${DB_HOST_CLEAN} port=${DB_PORT} dbname=${DB_DATABASE} user=${DB_USERNAME} sslmode=require" -c '\q' 2>/tmp/pg_error; do
+  until psql "host=${DB_HOST_CLEAN} port=${DB_PORT} dbname=${DB_DATABASE} user=${DB_USERNAME} sslmode=prefer connect_timeout=10" -c '\q' 2>/tmp/pg_error; do
     echo "Attempt $retries failed. Error: $(cat /tmp/pg_error)"
     retries=$((retries+1))
-    if [ "$retries" -ge 60 ]; then
+    if [ "$retries" -ge 30 ]; then
       echo "Timed out waiting for Postgres after $retries attempts"
       return 1
     fi
@@ -36,7 +36,7 @@ wait_for_mysql() {
   retries=0
   until mysqladmin ping -h "${DB_HOST}" -P "${DB_PORT}" --silent; do
     retries=$((retries+1))
-    if [ "$retries" -ge 60 ]; then
+    if [ "$retries" -ge 30 ]; then
       echo "Timed out waiting for MySQL after $retries attempts"
       return 1
     fi
