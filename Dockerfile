@@ -34,8 +34,14 @@ COPY ./nginx.conf /etc/nginx/sites-available/default
 
 # Expose port
 EXPOSE 80
+ENV PORT=80
+
+# Copy nginx config and replace port
+COPY ./nginx.conf /etc/nginx/sites-available/default
+RUN sed -i "s/listen 80/listen \$PORT/g" /etc/nginx/sites-available/default
 
 # Start Supervisor to run both Nginx and PHP-FPM
+CMD php artisan config:clear && \
 # Copy helper entrypoint that waits for the DB and runs migrations
 COPY ./docker-entrypoint.sh /var/www/html/docker-entrypoint.sh
 RUN chmod +x /var/www/html/docker-entrypoint.sh

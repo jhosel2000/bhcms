@@ -12,10 +12,12 @@ echo "Starting container entrypoint..."
 : ${DB_DATABASE:=forge}
 
 wait_for_postgres() {
-  echo "Waiting for Postgres at ${DB_HOST}:${DB_PORT}..."
+  # Remove https:// if present in DB_HOST
+  DB_HOST_CLEAN=$(echo "${DB_HOST}" | sed 's|^https://||')
+  echo "Waiting for Postgres at ${DB_HOST_CLEAN}:${DB_PORT}..."
   export PGPASSWORD="${DB_PASSWORD}"
   retries=0
-  until psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USERNAME}" -d "${DB_DATABASE}" -c '\q' >/dev/null 2>&1; do
+  until psql -h "${DB_HOST_CLEAN}" -p "${DB_PORT}" -U "${DB_USERNAME}" -d "${DB_DATABASE}" -c '\q' >/dev/null 2>&1; do
     retries=$((retries+1))
     if [ "$retries" -ge 60 ]; then
       echo "Timed out waiting for Postgres after $retries attempts"

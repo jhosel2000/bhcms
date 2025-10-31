@@ -25,9 +25,9 @@ services:
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_DATABASE
-        sync: false  # Set in dashboard: your Supabase database name
+        sync: false  # Set in dashboard: postgres
       - key: DB_HOST
-        sync: false  # Set in dashboard: your-project.supabase.co
+        sync: false  # Set in dashboard: db.your-project-ref.supabase.co (remove https:// if present)
       - key: DB_PORT
         value: "5432"
       - key: DB_USERNAME
