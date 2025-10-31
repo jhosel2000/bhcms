@@ -15,9 +15,12 @@ wait_for_postgres() {
   # Remove https:// if present in DB_HOST
   DB_HOST_CLEAN=$(echo "${DB_HOST}" | sed 's|^https://||')
   echo "Waiting for Postgres at ${DB_HOST_CLEAN}:${DB_PORT}..."
+  echo "Database: ${DB_DATABASE}, User: ${DB_USERNAME}"
   export PGPASSWORD="${DB_PASSWORD}"
+  export PGSSLMODE=require
   retries=0
-  until psql -h "${DB_HOST_CLEAN}" -p "${DB_PORT}" -U "${DB_USERNAME}" -d "${DB_DATABASE}" -c '\q' >/dev/null 2>&1; do
+  until psql "host=${DB_HOST_CLEAN} port=${DB_PORT} dbname=${DB_DATABASE} user=${DB_USERNAME} sslmode=require" -c '\q' 2>/tmp/pg_error; do
+    echo "Attempt $retries failed. Error: $(cat /tmp/pg_error)"
     retries=$((retries+1))
     if [ "$retries" -ge 60 ]; then
       echo "Timed out waiting for Postgres after $retries attempts"

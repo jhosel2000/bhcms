@@ -32,13 +32,25 @@ RUN mkdir -p /var/www/html/database && chown -R www-data:www-data /var/www/html/
 # Copy Nginx config
 COPY ./nginx.conf /etc/nginx/sites-available/default
 
-# Expose port
-EXPOSE 80
+# Setup for Render's dynamic port
 ENV PORT=80
+EXPOSE ${PORT}
 
-# Copy nginx config and replace port
+# Copy and configure nginx
 COPY ./nginx.conf /etc/nginx/sites-available/default
-RUN sed -i "s/listen 80/listen \$PORT/g" /etc/nginx/sites-available/default
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf && \
+    sed -i 's/listen 80/listen $PORT/g' /etc/nginx/sites-available/default
+
+# Create supervisor config
+RUN echo "[supervisord]\n\
+nodaemon=true\n\
+\n\
+[program:nginx]\n\
+command=nginx\n\
+\n\
+[program:php-fpm]\n\
+command=php-fpm\n\
+" > /etc/supervisor/conf.d/supervisord.conf
 
 # Start Supervisor to run both Nginx and PHP-FPM
 CMD php artisan config:clear && \
